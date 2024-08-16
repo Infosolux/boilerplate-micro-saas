@@ -1,0 +1,64 @@
+services:
+  # Usando timescaledb para performance com dados temporais
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb:/var/lib/postgresql/data
+    networks:
+      - apps-dev
+
+  pgviewer:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - apps-dev
+
+  # Descomentar se usar o minio
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   environment:
+  #     MINIO_SERVER_URL: http://localhost:9000
+  #     MINIO_BROWSER_REDIRECT_URL: http://localhost:9000
+  #     MINIO_ROOT_USER: admin
+  #     MINIO_ROOT_PASSWORD: admin@@123
+  #   volumes:
+  #     - minio-data:/data
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   networks:
+  #     - apps-dev
+  #   command: server /data --console-address ":9001"
+
+  # Descomentar se usar cache
+  # keydb:
+  #   image: eqalpha/keydb
+  #   container_name: keydb
+  #   ports:
+  #     - "6378:6379"
+  #   networks:
+  #     - apps-dev
+
+volumes:
+  timescaledb:
+    driver: local
+
+  minio-data:
+    driver: local
+
+networks:
+  apps-dev:
+    driver: bridge
